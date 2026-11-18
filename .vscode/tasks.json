@@ -1,0 +1,91 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "${workspaceFolder}/app/build",
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "west",
+            "args": [
+                "build",
+                "${workspaceFolder}/app",
+                "-d",
+                "${workspaceFolder}/app/build",
+                "-p",
+                "auto",
+                "-b",
+                "${input:board}",
+                "--pristine"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+        },
+        {
+            "label": "Flash",
+            "type": "shell",
+            "command": "west",
+            "args": [
+                "flash",
+                "-d",
+                "${workspaceFolder}/app/build",
+                "--runner",
+                "${input:flasher}",
+            ]
+        },
+        {
+            "label": "Execute",
+            "type": "shell",
+            "command": "./app/build/zephyr/zephyr.exe"
+        },
+        {
+            "label": "Update",
+            "type": "shell",
+            "command": "west",
+            "args": [
+                "update"
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "board",
+            "type": "pickString",
+            "default": "native_sim",
+            "description": "See https://docs.zephyrproject.org/latest/boards/index.html",
+            "options": [
+                "native_sim",
+                "nucleo_f767zi",
+                "esp32_devkitc/esp32/procpu"
+            ]
+        },
+        {
+            "id": "flasher",
+            "type": "pickString",
+            "default": "openocd",
+            "description": "See https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html#choosing-a-runner",
+            "options": [
+                "openocd",
+                "stm32cubeprogrammer",
+                "esp32"
+            ]
+        },
+    ]
+}
